@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import type { Sale, SaleItem } from '@/lib/types';
-import { cancelSale, createReturn, getReturnedQuantities } from '@/lib/repository';
+import { cancelSale, deleteSale, createReturn, getReturnedQuantities } from '@/lib/repository';
 import { eur, formatDateTime, PAYMENT_LABELS } from '@/lib/utils';
 import PageHeader from '@/components/PageHeader';
 import Modal from '@/components/Modal';
@@ -22,6 +22,7 @@ export default function HistoryPage() {
   const [detail, setDetail] = useState<{ sale: Sale; items: SaleItem[] } | null>(null);
   const [receiptView, setReceiptView] = useState<{ sale: Sale; items: SaleItem[] } | null>(null);
   const [confirmCancel, setConfirmCancel] = useState<Sale | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<Sale | null>(null);
 
   async function openDetail(sale: Sale) {
     const items = await db.sale_items.where('sale_id').equals(sale.id).toArray();
@@ -88,6 +89,7 @@ export default function HistoryPage() {
             setReceiptView(detail);
           }}
           onCancel={() => setConfirmCancel(detail.sale)}
+          onDelete={() => setConfirmDelete(detail.sale)}
           onChanged={() => openDetail(detail.sale)}
         />
       )}
@@ -138,6 +140,34 @@ export default function HistoryPage() {
           </button>
         </div>
       </Modal>
+
+      {/* Stornierten Verkauf löschen bestätigen */}
+      <Modal
+        open={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        title="Stornierten Verkauf löschen?"
+        maxWidth="max-w-sm"
+      >
+        <p className="text-sm text-gray-600">
+          Beleg #{confirmDelete?.receipt_number} wird endgültig aus dem Verlauf entfernt.
+          Diese Aktion kann nicht rückgängig gemacht werden.
+        </p>
+        <div className="mt-4 flex gap-2">
+          <button
+            onClick={async () => {
+              if (confirmDelete) await deleteSale(confirmDelete.id);
+              setConfirmDelete(null);
+              setDetail(null);
+            }}
+            className="btn-danger flex-1"
+          >
+            Löschen
+          </button>
+          <button onClick={() => setConfirmDelete(null)} className="btn-secondary flex-1">
+            Abbrechen
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -148,6 +178,7 @@ function SaleDetail({
   onClose,
   onShowReceipt,
   onCancel,
+  onDelete,
   onChanged,
 }: {
   sale: Sale;
@@ -155,6 +186,7 @@ function SaleDetail({
   onClose: () => void;
   onShowReceipt: () => void;
   onCancel: () => void;
+  onDelete: () => void;
   onChanged: () => void;
 }) {
   const returnedQ = useLiveQuery(() => getReturnedQuantities(sale.id), [sale.id], {} as Record<string, number>);
@@ -258,6 +290,11 @@ function SaleDetail({
         {!cancelled && (
           <button onClick={onCancel} className="btn-danger flex-1">
             Stornieren
+          </button>
+        )}
+        {cancelled && (
+          <button onClick={onDelete} className="btn-danger flex-1">
+            Verkauf löschen
           </button>
         )}
       </div>

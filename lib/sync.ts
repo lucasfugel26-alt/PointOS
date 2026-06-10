@@ -72,6 +72,15 @@ async function pushEntry(entry: OutboxEntry): Promise<void> {
       if (error) throw new Error(error.message);
       break;
     }
+    case 'sale.delete': {
+      const { id } = entry.payload;
+      // sale_items & returns werden serverseitig per ON DELETE CASCADE
+      // bzw. manuell entfernt; Rückgaben referenzieren sales(id).
+      await sb.from('returns').delete().eq('sale_id', id);
+      const { error } = await sb.from('sales').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+      break;
+    }
     case 'return.create': {
       const { error } = await sb
         .from('returns')

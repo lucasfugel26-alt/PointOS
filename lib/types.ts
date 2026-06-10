@@ -76,6 +76,7 @@ export interface DailyClosing {
 export type OutboxOp =
   | 'sale.create'
   | 'sale.cancel'
+  | 'sale.delete'
   | 'return.create'
   | 'product.upsert'
   | 'product.delete'

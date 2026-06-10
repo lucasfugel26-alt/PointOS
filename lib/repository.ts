@@ -207,6 +207,25 @@ export async function cancelSale(saleId: string): Promise<void> {
   await enqueue('sale.cancel', { id: saleId, cancelled_at: ts });
 }
 
+// Stornierten Verkauf endgültig löschen. Nur erlaubt, wenn bereits
+// storniert (Bestand wurde dabei schon zurückgebucht). Zugehörige
+// Positionen und Rückgaben werden mit entfernt.
+export async function deleteSale(saleId: string): Promise<void> {
+  const sale = await db.sales.get(saleId);
+  if (!sale) return;
+  if (sale.status !== 'cancelled') {
+    throw new Error('Nur stornierte Verkäufe können gelöscht werden');
+  }
+
+  await db.transaction('rw', db.sales, db.sale_items, db.returns, async () => {
+    await db.sale_items.where('sale_id').equals(saleId).delete();
+    await db.returns.where('sale_id').equals(saleId).delete();
+    await db.sales.delete(saleId);
+  });
+
+  await enqueue('sale.delete', { id: saleId });
+}
+
 export async function listSales(): Promise<Sale[]> {
   const all = await db.sales.toArray();
   return all.sort(
