@@ -13,7 +13,7 @@ export default function SettingsPage() {
     <div>
       <PageHeader title="Einstellungen" />
 
-      <div className="max-w-2xl space-y-6 p-6">
+      <div className="max-w-2xl space-y-6 p-4 sm:p-6">
         {/* Sync */}
         <div className="card p-5">
           <h2 className="font-semibold text-gray-900">Synchronisation</h2>

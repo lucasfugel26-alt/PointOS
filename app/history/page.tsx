@@ -33,8 +33,41 @@ export default function HistoryPage() {
     <div>
       <PageHeader title="Verlauf" subtitle={`${sales?.length ?? 0} Transaktionen`} />
 
-      <div className="p-6">
-        <div className="card overflow-hidden">
+      <div className="p-4 sm:p-6">
+        {/* Mobile card list */}
+        <div className="space-y-2 sm:hidden">
+          {(sales || []).map((s) => (
+            <button
+              key={s.id}
+              onClick={() => openDetail(s)}
+              className="card w-full p-4 text-left"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="font-medium text-gray-900">#{s.receipt_number}</div>
+                  <div className="mt-0.5 text-xs text-gray-500">{formatDateTime(s.created_at)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="font-semibold text-gray-900">{eur(s.total)}</div>
+                  <div className="mt-0.5 text-xs text-gray-500">{PAYMENT_LABELS[s.payment_method]}</div>
+                </div>
+              </div>
+              <div className="mt-2">
+                {s.status === 'cancelled' ? (
+                  <span className="badge bg-red-100 text-red-700">Storniert</span>
+                ) : (
+                  <span className="badge bg-emerald-100 text-emerald-700">Abgeschlossen</span>
+                )}
+              </div>
+            </button>
+          ))}
+          {(sales || []).length === 0 && (
+            <p className="py-12 text-center text-gray-400">Noch keine Verkäufe.</p>
+          )}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden sm:block card overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
               <tr>

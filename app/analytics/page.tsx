@@ -170,7 +170,7 @@ export default function AnalyticsPage() {
         }
       />
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 p-4 sm:p-6">
         {/* KPIs */}
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <Kpi label="Nettoumsatz" value={eur(data.netRevenue)} hint="abzgl. Rückgaben" />
@@ -249,9 +249,9 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          <div className="card p-5">
+          <div className="card overflow-x-auto p-5">
             <h3 className="mb-4 font-semibold text-gray-900">Top-Artikel</h3>
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[280px] text-sm">
               <thead className="text-left text-xs uppercase text-gray-500">
                 <tr>
                   <th className="pb-2">Artikel</th>

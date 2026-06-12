@@ -47,23 +47,23 @@ export default function InventoryPage() {
         title="Lager"
         subtitle={`${list.length} Produkte`}
         action={
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <label className="flex items-center gap-2 text-sm text-gray-600">
               <input
                 type="checkbox"
                 checked={showArchived}
                 onChange={(e) => setShowArchived(e.target.checked)}
               />
-              Archivierte anzeigen
+              Archivierte
             </label>
             <button onClick={() => setEditing({ ...EMPTY })} className="btn-primary">
-              <PlusIcon /> Produkt anlegen
+              <PlusIcon /> Neu
             </button>
           </div>
         }
       />
 
-      <div className="grid grid-cols-1 gap-3 p-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-3 xl:grid-cols-4">
         {list.map((p) => (
           <div key={p.id} className={`card flex flex-col p-4 ${p.archived ? 'opacity-60' : ''}`}>
             <div className="flex items-start justify-between">

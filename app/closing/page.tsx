@@ -61,7 +61,7 @@ export default function ClosingPage() {
         })}
       />
 
-      <div className="grid grid-cols-1 gap-6 p-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 p-4 sm:p-6 lg:grid-cols-2">
         {/* Übersicht */}
         <div className="card p-5">
           <h2 className="mb-4 font-semibold text-gray-900">Übersicht heute</h2>
@@ -147,10 +147,10 @@ export default function ClosingPage() {
       </div>
 
       {/* Archiv */}
-      <div className="px-6 pb-8">
+      <div className="px-4 pb-8 sm:px-6">
         <h2 className="mb-3 font-semibold text-gray-900">Abgeschlossene Tage</h2>
-        <div className="card overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="card overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
               <tr>
                 <th className="px-4 py-3">Datum</th>
